@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, ScrollView, Pressable, useWindowDimensions } from "react-native";
-import Svg, { Dfs, Pattern, Path, Rect } from "react-native-svg";
+import Svg, { Pattern, Path, Rect } from "react-native-svg";
 import { styles } from "../styles/styles";
 
 interface Coordinates {
@@ -17,7 +17,7 @@ const RECTANGLE_COORDS: Coordinates = {
   rowEnd: 171,
 };
 
-const GRID_UNIT = 2.5;
+const BASE_GRID_UNIT = 2.5;
 const DESKTOP_COLS = 1200;
 const DESKTOP_ROWS = 190;
 
@@ -35,12 +35,18 @@ export default function HomeScreen() {
   }, [isMobile]);
 
   const zoomIn = () => setZoom(z => Math.min(z * 1.2, 5));
-  const zoomOut = () => setZoom(z => Math.max(z / 1.2, 0.05));
+  const zoomOut = () => setZoom(z => Math.max(z / 1.2, 0.2)); // Keeps a safe zoom out minimum
   const handleReset = () => setZoom(isMobile ? 0.8 : 1);
 
-  const canvasWidth = (isMobile ? DESKTOP_ROWS : DESKTOP_COLS) * GRID_UNIT;
-  const canvasHeight = (isMobile ? DESKTOP_COLS : DESKTOP_ROWS) * GRID_UNIT;
+  // DYNAMIC CALCULATIONS: Multiply base units by zoom factor directly
+  const currentGridUnit = BASE_GRID_UNIT * zoom;
+  const minorStep = 5 * zoom;
+  const majorStep = 25 * zoom;
 
+  const canvasWidth = (isMobile ? DESKTOP_ROWS : DESKTOP_COLS) * currentGridUnit;
+  const canvasHeight = (isMobile ? DESKTOP_COLS : DESKTOP_ROWS) * currentGridUnit;
+
+  // Calculates rectangle layout styles dynamically relative to the current zoom size
   const getRectangleStyle = () => {
     let startCol = RECTANGLE_COORDS.colStart;
     let endCol = RECTANGLE_COORDS.colEnd;
@@ -50,19 +56,19 @@ export default function HomeScreen() {
     if (isMobile) {
       return {
         position: 'absolute' as const,
-        left: (startRow - 1) * GRID_UNIT,
-        top: (startCol - 1) * GRID_UNIT,
-        width: (endRow - startRow) * GRID_UNIT,
-        height: (endCol - startCol) * GRID_UNIT,
+        left: (startRow - 1) * currentGridUnit,
+        top: (startCol - 1) * currentGridUnit,
+        width: (endRow - startRow) * currentGridUnit,
+        height: (endCol - startCol) * currentGridUnit,
       };
     }
 
     return {
       position: 'absolute' as const,
-      left: (startCol - 1) * GRID_UNIT,
-      top: (startRow - 1) * GRID_UNIT,
-      width: (endCol - startCol) * GRID_UNIT,
-      height: (endRow - startRow) * GRID_UNIT,
+      left: (startCol - 1) * currentGridUnit,
+      top: (startRow - 1) * currentGridUnit,
+      width: (endCol - startCol) * currentGridUnit,
+      height: (endRow - startRow) * currentGridUnit,
     };
   };
 
@@ -87,33 +93,32 @@ export default function HomeScreen() {
       <View style={styles.canvasSection}>
         <ScrollView horizontal style={styles.canvasWrapperHorizontal}>
           <ScrollView contentContainerStyle={styles.canvasWrapperVertical}>
-            <View 
-              style={[
-                styles.canvas, 
-                { 
-                  width: canvasWidth, 
-                  height: canvasHeight,
-                  transform: [{ scale: zoom }],
-                }
-              ]}
-            >
-              {/* Native Vector Blueprint Grid Background Builder */}
-              <Svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-                {/* Minor grid matrix lines (Every 5px) */}
-                <Pattern id="minorGrid" width="5" height="5" patternUnits="userSpaceOnUse">
-                  <Path d="M 5 0 L 0 0 0 5" fill="none" stroke="#d0d0d0" strokeWidth="0.5" />
-                </Pattern>
-                {/* Major grid anchor blocks (Every 25px) */}
-                <Pattern id="majorGrid" width="25" height="25" patternUnits="userSpaceOnUse">
-                  <Rect width="25" height="25" fill="url(#minorGrid)" />
-                  <Path d="M 25 0 L 0 0 0 25" fill="none" stroke="#888888" strokeWidth="1" />
-                </Pattern>
-                {/* Fills the whole background container */}
-                <Rect width="100%" height="100%" fill="url(#majorGrid)" />
-              </Svg>
+            <View style={styles.centeringContainer}>
+              <View 
+                style={[
+                  styles.canvas, 
+                  { 
+                    width: canvasWidth, 
+                    height: canvasHeight,
+                    // REMOVED: CSS transform scale completely gone to fix cutoff bug!
+                  }
+                ]}
+              >
+                {/* Dynamic SVG Vector Grid Background */}
+                <Svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+                  <Pattern id="minorGrid" width={minorStep} height={minorStep} patternUnits="userSpaceOnUse">
+                    <Path d={`M ${minorStep} 0 L 0 0 0 ${minorStep}`} fill="none" stroke="#d0d0d0" strokeWidth="0.5" />
+                  </Pattern>
+                  <Pattern id="majorGrid" width={majorStep} height={majorStep} patternUnits="userSpaceOnUse">
+                    <Rect width={majorStep} height={majorStep} fill="url(#minorGrid)" />
+                    <Path d={`M ${majorStep} 0 L 0 0 0 ${majorStep}`} fill="none" stroke="#888888" strokeWidth="1" />
+                  </Pattern>
+                  <Rect width="100%" height="100%" fill="url(#majorGrid)" />
+                </Svg>
 
-              {/* Plotted Content Shape Block */}
-              <View style={[styles.rectangle, getRectangleStyle()]} />
+                {/* Plotted Content Shape Block */}
+                <View style={[styles.rectangle, getRectangleStyle()]} />
+              </View>
             </View>
           </ScrollView>
         </ScrollView>

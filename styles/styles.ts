@@ -1,4 +1,4 @@
-import { StyleSheet, Platform } from "react-native";
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   app: {
@@ -53,24 +53,24 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   canvasWrapperVertical: {
-    alignItems: "flex-start",
-    paddingTop: 15, 
+    flexGrow: 1,
+  },
+  centeringContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 30, // Keeps a nice uniform gutter around your canvas
   },
   canvas: {
-    backgroundColor: "#fcfcfc", // Clean drawing sheet backdrop
+    backgroundColor: "#fcfcfc",
     borderWidth: 1,
     borderColor: "#888888",
     position: "relative",
-    ...Platform.select({
-      web: {
-        transformOrigin: "top left",
-      },
-    }),
   },
   rectangle: {
     opacity: 0.7,
     backgroundColor: "steelblue",
-    zIndex: 2, // Layered safely above the background grid lines
+    zIndex: 2,
   },
   configurator: {
     height: "30%",
