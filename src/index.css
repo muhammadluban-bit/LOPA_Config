@@ -1,0 +1,145 @@
+/* ==========================================================================
+   1. OVERALL PAGE LAYOUT
+   ========================================================================== */
+   .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  
+  /* ==========================================================================
+     2. TOP NAVIGATION
+     ========================================================================== */
+  .navbar {
+    flex-shrink: 0;
+    height: 60px;
+    background: #2c3e50;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    font-weight: bold;
+    border-bottom: 1px solid #444;
+  }
+  
+  .navbar h1 {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  
+  /* ==========================================================================
+     3. ZOOM CONTROLS
+     ========================================================================== */
+  .controls {
+    position: fixed;
+    top: 70px;
+    right: 10px;
+    z-index: 100;
+    display: flex;
+    gap: 8px;
+  }
+  
+  .controls button {
+    padding: 6px 12px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .controls button:hover {
+    background: #f0f0f0;
+  }
+  
+  /* ==========================================================================
+     4. CANVAS DISPLAY SECTION
+     ========================================================================== */
+  .canvas-section {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* Scrollable wrapper framing the grid layout area */
+  .canvas-wrapper {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    align-items: center; /* Vertically centers the canvas on desktop */
+    box-sizing: border-box;
+  }
+  
+  /* DESKTOP CONFIGURATION: Wide horizontal grid layout */
+  .canvas {
+    display: grid;
+    grid-template-columns: repeat(1200, 2.5px); 
+    grid-template-rows: repeat(190, 2.5px);     
+    width: fit-content;
+    flex-shrink: 0; /* Prevents browser from collapsing layout horizontally */
+    
+    background-image: 
+      linear-gradient(#888888 1px, transparent 1px),
+      linear-gradient(90deg, #888888 1px, transparent 1px),
+      linear-gradient(#d0d0d0 0.5px, transparent 0.5px),
+      linear-gradient(90deg, #d0d0d0 0.5px, transparent 0.5px);
+    
+    background-size: 25px 25px, 25px 25px, 5px 5px, 5px 5px;
+    transition: transform 0.1s ease;
+  }
+  
+  /* MOBILE CONFIGURATION: Transposed dimensions for top-to-bottom flow */
+  .canvas.canvas-mobile {
+    grid-template-columns: repeat(190, 2.5px);     
+    grid-template-rows: repeat(1200, 2.5px);
+    width: fit-content;
+    height: fit-content;
+  }
+  
+  /* ==========================================================================
+     5. SEAT ELEMENTS & RECTANGLES
+     ========================================================================== */
+  /* Bounding coordinates are passed directly into React inline styles now */
+  .rectangle {
+    opacity: 0.7;
+    background: steelblue;
+    z-index: 1;
+  }
+  
+  /* ==========================================================================
+     6. CONFIGURATOR & RESPONSIVE BREAKPOINTS
+     ========================================================================== */
+  .configurator {
+    flex-shrink: 0;
+    height: 35%;
+    min-height: 150px;
+    resize: vertical;
+    overflow: auto;
+    background: #f5f5f5;
+    border-top: 1px solid #ccc;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+  
+  .configurator h2 {
+    font-size: 1.1rem;
+    margin-top: 0;
+  }
+  
+  /* CLEAN MOBILE BREAKPOINT ADJUSTMENTS */
+  @media (max-width: 768px) {
+    .configurator {
+      height: 40%;
+      resize: none; /* Disable vertical resize bar on tiny phone viewports */
+    }
+  
+    .canvas-wrapper {
+      display: block; /* Let it wrap natively from the top-left quadrant */
+      padding-top: 40px; /* Safe padding boundary fallback for scaled layouts */
+    }
+  }
+  
