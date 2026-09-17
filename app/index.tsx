@@ -11,14 +11,14 @@ interface Coordinates {
 }
 
 const RECTANGLE_COORDS: Coordinates = {
-  colStart: 11,
-  colEnd: 1091,
+  colStart: 241,
+  colEnd: 1094,
   rowStart: 21,
-  rowEnd: 171,
+  rowEnd: 167,
 };
 
 const BASE_GRID_UNIT = 2.5;
-const DESKTOP_COLS = 1200;
+const DESKTOP_COLS = 1300; //fuselage length 1479
 const DESKTOP_ROWS = 190;
 
 export default function HomeScreen() {
