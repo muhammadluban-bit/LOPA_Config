@@ -215,7 +215,12 @@ export default function HomeScreen() {
           </Text>
           <Link href="/new" asChild>
             <Pressable>
-              <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>Go to New Page</Text>
+              <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>new</Text>
+            </Pressable>
+         </Link>
+          <Link href="/svg-eg" asChild>
+            <Pressable>
+              <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>lopa svg</Text>
             </Pressable>
          </Link>
         </View>
