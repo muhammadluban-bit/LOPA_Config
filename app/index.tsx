@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, ScrollView, Pressable, useWindowDimensions } from "react-native";
-import Svg, { Pattern, Path, Rect } from "react-native-svg";
+import Svg, { Pattern, Path, Rect, Line } from "react-native-svg";
 import { styles } from "../styles/styles";
+import { Link } from 'expo-router';
+
 
 interface Coordinates {
   colStart: number;
@@ -18,13 +20,18 @@ const RECTANGLE_COORDS: Coordinates = {
 };
 
 const BASE_GRID_UNIT = 2.5;
-const DESKTOP_COLS = 1300; //fuselage length 1479
+const DESKTOP_COLS = 1300; // Fuselage length representation
 const DESKTOP_ROWS = 190;
+const RULER_HEIGHT = 30; // Height allocated for the top STA ruler
 
 export default function HomeScreen() {
   const { width: windowWidth } = useWindowDimensions();
   const [zoom, setZoom] = useState<number>(1);
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  
+  // Hover tracking states
+  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
+  const [currentSTA, setCurrentSTA] = useState<number | null>(null);
 
   useEffect(() => {
     setIsMobile(windowWidth <= 768);
@@ -35,18 +42,17 @@ export default function HomeScreen() {
   }, [isMobile]);
 
   const zoomIn = () => setZoom(z => Math.min(z * 1.2, 5));
-  const zoomOut = () => setZoom(z => Math.max(z / 1.2, 0.2)); // Keeps a safe zoom out minimum
+  const zoomOut = () => setZoom(z => Math.max(z / 1.2, 0.2));
   const handleReset = () => setZoom(isMobile ? 0.8 : 1);
 
-  // DYNAMIC CALCULATIONS: Multiply base units by zoom factor directly
   const currentGridUnit = BASE_GRID_UNIT * zoom;
   const minorStep = 5 * zoom;
   const majorStep = 25 * zoom;
 
+  // Layout bounds including space for the top ruler grid
   const canvasWidth = (isMobile ? DESKTOP_ROWS : DESKTOP_COLS) * currentGridUnit;
-  const canvasHeight = (isMobile ? DESKTOP_COLS : DESKTOP_ROWS) * currentGridUnit;
+  const canvasHeight = ((isMobile ? DESKTOP_COLS : DESKTOP_ROWS) * currentGridUnit) + RULER_HEIGHT;
 
-  // Calculates rectangle layout styles dynamically relative to the current zoom size
   const getRectangleStyle = () => {
     let startCol = RECTANGLE_COORDS.colStart;
     let endCol = RECTANGLE_COORDS.colEnd;
@@ -57,7 +63,7 @@ export default function HomeScreen() {
       return {
         position: 'absolute' as const,
         left: (startRow - 1) * currentGridUnit,
-        top: (startCol - 1) * currentGridUnit,
+        top: (startCol - 1) * currentGridUnit + RULER_HEIGHT,
         width: (endRow - startRow) * currentGridUnit,
         height: (endCol - startCol) * currentGridUnit,
       };
@@ -66,16 +72,70 @@ export default function HomeScreen() {
     return {
       position: 'absolute' as const,
       left: (startCol - 1) * currentGridUnit,
-      top: (startRow - 1) * currentGridUnit,
+      top: (startRow - 1) * currentGridUnit + RULER_HEIGHT,
       width: (endCol - startCol) * currentGridUnit,
       height: (endRow - startRow) * currentGridUnit,
     };
   };
 
+  // Tracks cursor and calculates current continuous STA position
+  const handlePointerMove = (e: any) => {
+    const nativeEvent = e.nativeEvent;
+    if (!nativeEvent) return;
+
+    // Get cursor position relative to canvas container
+    const x = nativeEvent.offsetX;
+    const y = nativeEvent.offsetY;
+
+    setHoverPos({ x, y });
+
+    // 1 Column = 2 inches. Compute exact horizontal frame location based on active orientation mode
+    if (isMobile) {
+      const activeGridY = y - RULER_HEIGHT;
+      if (activeGridY >= 0) {
+        const calculatedColumn = Math.floor(activeGridY / currentGridUnit) + 1;
+        setCurrentSTA(calculatedColumn * 2);
+      }
+    } else {
+      const calculatedColumn = Math.floor(x / currentGridUnit) + 1;
+      setCurrentSTA(calculatedColumn * 2);
+    }
+  };
+
+  const handlePointerLeave = () => {
+    setHoverPos(null);
+    setCurrentSTA(null);
+  };
+
+  // Dynamically generates clean tick markers across the ruler view frame
+  const renderRulerTicks = () => {
+    const ticks = [];
+    const stepSize = 50; // Place a numerical text tick every 50 columns (100 inches)
+    const limit = isMobile ? DESKTOP_ROWS : DESKTOP_COLS;
+
+    for (let i = 0; i <= limit; i += stepSize) {
+      const position = i * currentGridUnit;
+      const staLabel = i * 2; // Converts grid ticks directly to absolute aircraft layout inches
+
+      ticks.push(
+        <View 
+          key={i} 
+          style={[
+            isMobile ? styles.rulerTickMobile : styles.rulerTickHorizontal,
+            { [isMobile ? 'top' : 'left']: position }
+          ]}
+        >
+          <Text style={styles.rulerText}>STA {staLabel}</Text>
+        </View>
+      );
+    }
+    return ticks;
+  };
+
   return (
     <View style={styles.app}>
       <View style={styles.navbar}>
-        <Text style={styles.navbarTitle}>Navigation Bar Placeholder</Text>
+        <Text style={styles.navbarTitle}>A320 LOPA Configurator</Text>
       </View>
 
       <View style={styles.controls}>
@@ -95,17 +155,24 @@ export default function HomeScreen() {
           <ScrollView contentContainerStyle={styles.canvasWrapperVertical}>
             <View style={styles.centeringContainer}>
               <View 
+                /* @ts-ignore - native pointer event bindings for web routing engines */
+                onPointerMove={handlePointerMove}
+                onPointerLeave={handlePointerLeave}
                 style={[
                   styles.canvas, 
                   { 
                     width: canvasWidth, 
                     height: canvasHeight,
-                    // REMOVED: CSS transform scale completely gone to fix cutoff bug!
                   }
                 ]}
               >
+                {/* Top STA Ruler Header Zone */}
+                <View style={isMobile ? styles.rulerContainerMobile : styles.rulerContainerHorizontal}>
+                  {renderRulerTicks()}
+                </View>
+
                 {/* Dynamic SVG Vector Grid Background */}
-                <Svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+                <Svg style={{ position: 'absolute', top: RULER_HEIGHT, left: 0, width: '100%', height: '100%' }}>
                   <Pattern id="minorGrid" width={minorStep} height={minorStep} patternUnits="userSpaceOnUse">
                     <Path d={`M ${minorStep} 0 L 0 0 0 ${minorStep}`} fill="none" stroke="#d0d0d0" strokeWidth="0.5" />
                   </Pattern>
@@ -114,6 +181,19 @@ export default function HomeScreen() {
                     <Path d={`M ${majorStep} 0 L 0 0 0 ${majorStep}`} fill="none" stroke="#888888" strokeWidth="1" />
                   </Pattern>
                   <Rect width="100%" height="100%" fill="url(#majorGrid)" />
+
+                  {/* Realtime Interactive Crosshair Tracking Line overlay */}
+                  {hoverPos && (
+                    <Line
+                      x1={isMobile ? 0 : hoverPos.x}
+                      y1={isMobile ? hoverPos.y - RULER_HEIGHT : 0}
+                      x2={isMobile ? '100%' : hoverPos.x}
+                      y2={isMobile ? hoverPos.y - RULER_HEIGHT : '100%'}
+                      stroke="#e74c3c"
+                      strokeWidth="1.5"
+                      strokeDasharray="4 3"
+                    />
+                  )}
                 </Svg>
 
                 {/* Plotted Content Shape Block */}
@@ -125,12 +205,19 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.configurator}>
-        <Text style={styles.configuratorTitle}>Configurator Placeholder</Text>
-        <Text style={styles.configuratorText}>Future controls, properties and settings will go here.</Text>
+        <Text style={styles.configuratorTitle}>Configurator Dashboard</Text>
+        <Text style={styles.configuratorText}>
+          {currentSTA !== null ? `Hovering Coordinate: STA ${currentSTA} in.` : "Hover inside the fuselage matrix to parse positions."}
+        </Text>
         <View style={styles.metaContainer}>
           <Text style={styles.metaText}>
             Static Coords: Columns ({RECTANGLE_COORDS.colStart}-{RECTANGLE_COORDS.colEnd}) | Rows ({RECTANGLE_COORDS.rowStart}-{RECTANGLE_COORDS.rowEnd})
           </Text>
+          <Link href="/new" asChild>
+            <Pressable>
+              <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>Go to New Page</Text>
+            </Pressable>
+         </Link>
         </View>
       </View>
     </View>
