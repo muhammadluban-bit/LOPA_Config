@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import {smia} from '../styles/styles.new';
 
@@ -6,10 +6,24 @@ export default function New() {
   return (
     <View style={smia.container}>
         <View style={smia.header}>
-          <Text style={smia.headerText}>Home</Text>
-          <Text style={smia.headerText}>About</Text>
-          <Text style={smia.headerText}>Navigation</Text>
-          <Text style={smia.headerText}>Submit</Text>
+          <View style={smia.navLinksContainer}>
+            <TouchableOpacity style={smia.navLink}>
+              <Text style={smia.navLinkText}>Home</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={smia.navLink}>
+              <Text style={smia.navLinkText}>About</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={smia.navLink}>
+              <Text style={smia.navLinkText}>Explore</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={smia.navLink}>
+              <Text style={smia.navLinkText}>Configure</Text>
+            </TouchableOpacity>       
+          </View>
+
         </View> 
 
         <View style={[smia.box, smia.box1]}>
