@@ -36,9 +36,7 @@ export default function New() {
 
         <View style={[stilo.box, stilo.box1]}>
           <Text>smia.box1</Text>
-          <View style={stilo.grid}>
-            <Grid isMobile={isMobile} minorStep={5} majorStep={25} rulerHeight={0} />
-          </View>
+          <Grid isMobile={isMobile} minorStep={5} majorStep={25} rulerHeight={0} width={1481} height={146} />
         </View>
         <View style={[stilo.box, stilo.box2]}>
           <Text>smia/stilo.box2</Text>

@@ -10,7 +10,6 @@ interface NamedStyles {
     box: ViewStyle;
     box1: ViewStyle;
     box2: ViewStyle;
-    grid: ViewStyle;
 }
 
 export const smia = (isMobile: boolean) => StyleSheet.create<NamedStyles>({
@@ -63,7 +62,7 @@ export const smia = (isMobile: boolean) => StyleSheet.create<NamedStyles>({
     box1:{
         flex: isMobile ? 3 : 1,
         backgroundColor: '#f5f2f2',
-
+        justifyContent: 'center',
         boxShadow:[
             {
             offsetX: 0,
@@ -88,14 +87,4 @@ export const smia = (isMobile: boolean) => StyleSheet.create<NamedStyles>({
         backgroundColor: '#f6f7f7',
         paddingVertical:10
     },
-
-    grid:{
-        flex:1,
-        width: 101,
-        borderColor: '#7f84b4',
-        borderWidth: 2,
-        position: 'relative'
-
-    }
-
 })
