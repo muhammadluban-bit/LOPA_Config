@@ -4,6 +4,7 @@ interface NamedStyles {
     container: ViewStyle;
     header: ViewStyle;
     navLinksContainer: ViewStyle;
+    logoPlaceholder: ViewStyle;
     navLink: ViewStyle;
     navLinkText: TextStyle;
     box: ViewStyle;
@@ -28,15 +29,23 @@ export const smia = StyleSheet.create<NamedStyles>({
         
     },
     navLinksContainer:{
+        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        paddingLeft: 150,
+        justifyContent: 'flex-start',
         height: '100%',
+    },
+
+    logoPlaceholder:{
+        height: '100%',
+        justifyContent: 'center',
+        paddingLeft: 10,
+        paddingRight: '10%',
     },
     navLink:{
         height:'100%',
         justifyContent: 'center',
-        paddingHorizontal:12,
+        paddingHorizontal:10,
     },
     navLinkText:{
         color: '#ffffff',
@@ -51,16 +60,31 @@ export const smia = StyleSheet.create<NamedStyles>({
         alignItems: 'center',
     },
     box1:{
-        flex: 1,
-        backgroundColor: '#eeeeee'
+        flex: 2,
+        backgroundColor: '#eeeeee',
+
+        boxShadow:[
+            {
+            offsetX: 0,
+            offsetY: 8,            // Pushes shadow downward from the top edge
+            blurRadius: 10,
+            spreadDistance: -6,    // Optional: tightens the horizontal spill
+            color: 'rgba(0, 0, 0, 0.1)',
+            inset: true,           // Makes it an inner shadow
+            },
+            {
+            offsetX: 0,
+            offsetY: -8,           // Pushes shadow upward from the bottom edge
+            blurRadius: 10,
+            spreadDistance: -6,
+            color: 'rgba(0, 0, 0, 0.1)',
+            inset: true,           // Makes it an inner shadow
+            }
+        ]
     },
     box2:{
-        flex: 2,
-        backgroundColor: '#eaebeb'
-    },
-    box3:{
         flex: 1,
-        backgroundColor: '#dadada'
+        backgroundColor: '#eaebeb'
     },
 
 })
