@@ -57,7 +57,8 @@ export const smia = (isMobile: boolean) => StyleSheet.create<NamedStyles>({
     box:{
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-start',
+        padding: 10,
     },
     box1:{
         flex: isMobile ? 3 : 1,
@@ -90,8 +91,10 @@ export const smia = (isMobile: boolean) => StyleSheet.create<NamedStyles>({
 
     grid:{
         flex:1,
+        width: 101,
         borderColor: '#7f84b4',
         borderWidth: 2,
+        position: 'relative'
 
     }
 

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native'
 import React from 'react'
 import {smia} from '../styles/styles.new';
+import Grid from '../components/Grid';
 
 
 export default function New() {
@@ -36,7 +37,7 @@ export default function New() {
         <View style={[stilo.box, stilo.box1]}>
           <Text>smia.box1</Text>
           <View style={stilo.grid}>
-            <Text>grid which expands flexibly as required</Text>
+            <Grid isMobile={isMobile} minorStep={5} majorStep={25} rulerHeight={0} />
           </View>
         </View>
         <View style={[stilo.box, stilo.box2]}>
