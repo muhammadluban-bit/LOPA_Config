@@ -10,10 +10,10 @@ interface NamedStyles {
     box: ViewStyle;
     box1: ViewStyle;
     box2: ViewStyle;
-    box3: ViewStyle;
+    grid: ViewStyle;
 }
 
-export const smia = StyleSheet.create<NamedStyles>({
+export const smia = (isMobile: boolean) => StyleSheet.create<NamedStyles>({
     container:{
         flex: 1,
     },
@@ -60,8 +60,8 @@ export const smia = StyleSheet.create<NamedStyles>({
         alignItems: 'center',
     },
     box1:{
-        flex: 2,
-        backgroundColor: '#eeeeee',
+        flex: isMobile ? 3 : 1,
+        backgroundColor: '#f5f2f2',
 
         boxShadow:[
             {
@@ -84,7 +84,15 @@ export const smia = StyleSheet.create<NamedStyles>({
     },
     box2:{
         flex: 1,
-        backgroundColor: '#eaebeb'
+        backgroundColor: '#f6f7f7',
+        paddingVertical:10
     },
+
+    grid:{
+        flex:1,
+        borderColor: '#7f84b4',
+        borderWidth: 2,
+
+    }
 
 })
