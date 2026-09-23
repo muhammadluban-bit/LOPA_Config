@@ -1,11 +1,9 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import Svg, { Defs, Pattern, Path, Rect, G } from "react-native-svg";
+import Svg, { Defs, Pattern, Path, Rect } from "react-native-svg";
 
 interface GridProps {
   isMobile: boolean;
-  minorStep: number;
-  majorStep: number;
   rulerHeight: number;
   width: number | string; 
   height?: number | string;
@@ -20,39 +18,55 @@ function Grid({
   zoom = 1 
 }: GridProps) {
 
+  // Dynamically scale the line steps using the zoom factor so they fill the container 1:1
+  const minorSize = 5 * zoom;
+  const majorSize = 25 * zoom;
+
   return (
-    <View style={[styles.gridContainer, { width, height, top: rulerHeight }]}>
+    <View style={[
+      styles.gridContainer, 
+      { 
+        width: Number(width), 
+        height: Number(height), 
+        top: rulerHeight, 
+        alignSelf: 'flex-start' 
+      }
+    ]}>
       <Svg style={styles.svgOverlay}>
         <Defs>
-          {/* Locked at static structural units (5x5). No double scaling. */}
+          {/* Dynamic sizing locks perfectly inside the shrinking/growing View container */}
           <Pattern 
             id="minorGrid" 
-            width={5} 
-            height={5} 
+            width={minorSize} 
+            height={minorSize} 
             patternUnits="userSpaceOnUse"
           >
-            <Path d="M 5 0 L 0 0 0 5" fill="none" stroke="#d0d0d0" strokeWidth="0.5" />
+            <Path 
+              d={`M ${minorSize} 0 L 0 0 0 ${minorSize}`} 
+              fill="none" 
+              stroke="#d0d0d0" 
+              strokeWidth="0.5" 
+            />
           </Pattern>
           
-          {/* Locked at static structural units (25x25). Perfect 5:1 ratio. */}
           <Pattern 
             id="majorGrid" 
-            width={25} 
-            height={25} 
+            width={majorSize} 
+            height={majorSize} 
             patternUnits="userSpaceOnUse"
           >
-            <Rect width={25} height={25} fill="url(#minorGrid)" />
-            <Path d="M 25 0 L 0 0 0 25" fill="none" stroke="#888888" strokeWidth="1" />
+            <Rect width={majorSize} height={majorSize} fill="url(#minorGrid)" />
+            <Path 
+              d={`M ${majorSize} 0 L 0 0 0 ${majorSize}`} 
+              fill="none" 
+              stroke="#888888" 
+              strokeWidth="1" 
+            />
           </Pattern>
         </Defs>
 
-        {/* 
-          We wrap the rendering Rect in a Group container and scale the composite view.
-          This applies the zoom transformation cleanly across all lines simultaneously.
-        */}
-        <G transform={`scale(${zoom})`}>
-          <Rect width="100%" height="100%" fill="url(#majorGrid)" />
-        </G>
+        {/* Removed <G transform> to let the background pattern natively fill the exact container pixel bounds */}
+        <Rect width="100%" height="100%" fill="url(#majorGrid)" />
       </Svg>
     </View>
   );
@@ -62,6 +76,7 @@ const styles = StyleSheet.create({
   gridContainer: {
     position: 'relative', 
     left: 0, 
+    backgroundColor: '#ffffff',
     borderColor: '#7f84b4',
     borderWidth: 2,
     overflow: 'hidden', 

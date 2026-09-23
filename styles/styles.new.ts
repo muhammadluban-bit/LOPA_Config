@@ -65,7 +65,7 @@ export const smia = (isMobile: boolean) => StyleSheet.create<NamedStyles>({
     },
     box1:{
         flex: isMobile ? 3 : 1,
-        backgroundColor: '#f5f2f2',
+        backgroundColor: 'F0F0F0',
         justifyContent: 'center',
         boxShadow:[
             {
@@ -130,9 +130,14 @@ export const smia = (isMobile: boolean) => StyleSheet.create<NamedStyles>({
         // @ts-ignore - Web compatibility safety block
         overflow: 'auto',
     },
+// Inside your styles.new.ts file, update the scrollContent block:
+
     scrollContent: {
-        flexDirection: 'row',
-        alignItems: 'stretch',
-        justifyContent: 'flex-start',
+        flexDirection: 'row', // Centers items on screen in mobile layout view, otherwise defaults to start positioning
+        alignItems: isMobile ? 'center' : 'stretch',
+        justifyContent: isMobile ? 'center' : 'flex-start',// Ensures the outer container tracks stretch completely to support centering calculations
+        minWidth: '100%',
+        minHeight: '100%',
     },
+
 })
