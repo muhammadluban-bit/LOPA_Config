@@ -9,7 +9,7 @@ export default function New() {
   const stilo = smia(isMobile); 
 
   const BASE_GRID_UNIT = 1;
-  const DESKTOP_COLS = 1491; 
+  const DESKTOP_COLS = 1500; 
   const DESKTOP_ROWS = 190;
   const RULER_HEIGHT = 30; 
 
@@ -21,17 +21,21 @@ export default function New() {
 
   const currentGridUnit = useMemo(() => BASE_GRID_UNIT * zoom, [zoom]);
 
-  // Cleaned up: minorStep and majorStep are removed since Grid handles them internally now.
 
-  const canvasWidth = useMemo(() => 
-    (isMobile ? DESKTOP_ROWS : DESKTOP_COLS) * currentGridUnit, 
-    [isMobile, currentGridUnit]
-  );
+  const canvasWidth = useMemo(() => {
+    const baseCols = isMobile ? DESKTOP_ROWS : DESKTOP_COLS;
+    const gridPx = baseCols * currentGridUnit;
+    // On mobile, the vertical ruler sits on the left side, expanding the width requirement
+    return isMobile ? gridPx + (RULER_HEIGHT * zoom) : gridPx;
+  }, [isMobile, currentGridUnit, zoom]);
 
-  const canvasHeight = useMemo(() => 
-    ((isMobile ? DESKTOP_COLS : DESKTOP_ROWS) * currentGridUnit) + RULER_HEIGHT, 
-    [isMobile, currentGridUnit]
-  );
+  const canvasHeight = useMemo(() => {
+    const baseRows = isMobile ? DESKTOP_COLS : DESKTOP_ROWS;
+    const gridPx = baseRows * currentGridUnit;
+    // On desktop, the horizontal ruler sits at the top, expanding the height requirement
+    return isMobile ? gridPx : gridPx + (RULER_HEIGHT * zoom);
+  }, [isMobile, currentGridUnit, zoom]);
+
 
   return (
     <View style={stilo.container}>
