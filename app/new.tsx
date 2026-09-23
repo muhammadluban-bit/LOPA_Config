@@ -82,7 +82,7 @@ export default function New() {
             >
               <Grid 
                 isMobile={isMobile} 
-                rulerHeight={0} 
+                rulerHeight={RULER_HEIGHT} 
                 width={canvasWidth} 
                 height={canvasHeight} 
                 zoom={zoom} 
