@@ -10,6 +10,12 @@ interface NamedStyles {
     box: ViewStyle;
     box1: ViewStyle;
     box2: ViewStyle;
+    controls: ViewStyle;
+    button: ViewStyle;
+    buttonText: TextStyle;
+    verticalScroll: ViewStyle;
+    horizontalScroll: ViewStyle;
+    scrollContent: ViewStyle;
 }
 
 export const smia = (isMobile: boolean) => StyleSheet.create<NamedStyles>({
@@ -25,7 +31,6 @@ export const smia = (isMobile: boolean) => StyleSheet.create<NamedStyles>({
         justifyContent: 'flex-start',
         alignItems: 'center',
         paddingHorizontal: 15,
-        
     },
     navLinksContainer:{
         flex: 1,
@@ -34,7 +39,6 @@ export const smia = (isMobile: boolean) => StyleSheet.create<NamedStyles>({
         justifyContent: 'flex-start',
         height: '100%',
     },
-
     logoPlaceholder:{
         height: '100%',
         justifyContent: 'center',
@@ -66,19 +70,19 @@ export const smia = (isMobile: boolean) => StyleSheet.create<NamedStyles>({
         boxShadow:[
             {
             offsetX: 0,
-            offsetY: 8,            // Pushes shadow downward from the top edge
+            offsetY: 8,            
             blurRadius: 10,
-            spreadDistance: -6,    // Optional: tightens the horizontal spill
+            spreadDistance: -6,    
             color: 'rgba(0, 0, 0, 0.1)',
-            inset: true,           // Makes it an inner shadow
+            inset: true,           
             },
             {
             offsetX: 0,
-            offsetY: -8,           // Pushes shadow upward from the bottom edge
+            offsetY: -8,           
             blurRadius: 10,
             spreadDistance: -6,
             color: 'rgba(0, 0, 0, 0.1)',
-            inset: true,           // Makes it an inner shadow
+            inset: true,           
             }
         ]
     },
@@ -86,5 +90,49 @@ export const smia = (isMobile: boolean) => StyleSheet.create<NamedStyles>({
         flex: 1,
         backgroundColor: '#f6f7f7',
         paddingVertical:10
+    },
+    controls: {
+        position: "relative",
+        alignSelf: "flex-end",
+        flexDirection: "row",
+        marginTop: 5,
+        marginBottom: 10,
+        zIndex: 100,
+        gap: 8,
+    },
+    button: {
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        backgroundColor: "#ffffff",
+        borderWidth: 1,
+        borderColor: "#cccccc",
+        borderRadius: 4,
+        elevation: 2,
+        shadowColor: "#000000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    buttonText: {
+        fontWeight: "bold",
+        color: "#000000",
+    },
+    verticalScroll: {
+        flex: 1,
+        width: '100%',
+        // @ts-ignore - Web compatibility safety block
+        overflow: 'auto',
+    },
+    horizontalScroll: {
+        // REMOVED flex: 1 to ensure grid content can push past bounds
+        width: '100%',
+        height: '100%',
+        // @ts-ignore - Web compatibility safety block
+        overflow: 'auto',
+    },
+    scrollContent: {
+        flexDirection: 'row',
+        alignItems: 'stretch',
+        justifyContent: 'flex-start',
     },
 })
