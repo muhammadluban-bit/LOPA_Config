@@ -223,6 +223,11 @@ export default function HomeScreen() {
               <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>lopa svg</Text>
             </Pressable>
          </Link>
+         <Link href="/test_page" asChild>
+            <Pressable>
+              <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>Test</Text>
+            </Pressable>
+         </Link>
         </View>
       </View>
     </View>
