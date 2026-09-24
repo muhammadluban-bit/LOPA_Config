@@ -5,17 +5,19 @@
   "type": "module",
   "main": "expo-router/entry",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0 --port 8081",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
-    "expo": "^57.0.23",
-    "expo-router": "^57.0.21",
+    "expo": "~57.0.25",
+    "expo-router": "~57.0.23",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
     "react-native-svg": "15.15.4",
     "react-native-web": "^0.21.2"
   },
